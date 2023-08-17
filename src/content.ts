@@ -1,10 +1,12 @@
 import { BlockMessageBody, Message } from "./types/messages";
 
-const iframeSrc = chrome.runtime.getURL("sticky_warning.html"); // Replace with your extension's relative path
+const stickyWarningSection = document.createElement('div');
+const warningText = document.createElement('a')
+warningText.textContent = 'You may be loosing your attention';
 
-const iframe = document.createElement("iframe");
-iframe.src = iframeSrc;
-iframe.classList.add("sticky-iframe");
+stickyWarningSection.setAttribute('id', 'navbar');
+stickyWarningSection.classList.add('sticky')
+stickyWarningSection.appendChild(warningText)
 
 let __request: Message;
 
@@ -44,9 +46,7 @@ const intervalId = setInterval(() => {
                 htmlElement.style.top = `${(parseInt(window.getComputedStyle(el).top) || 0) + 50}px`;
             }
         });
-
-        // Append the new element to the beginning of the body
-        document.body.insertBefore(iframe, document.body.firstChild);
+        document.body.insertBefore(stickyWarningSection, document.body.firstChild)
         clearInterval(intervalId)
         return true;
     }
