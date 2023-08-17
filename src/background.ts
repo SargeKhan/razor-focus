@@ -49,6 +49,7 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
     return;
   }
 
+
   blockSite({ blocked: __blocked, tabId, url });
 });
 

@@ -1,4 +1,5 @@
-import makeRules, { Rule } from "../make-rules";
+import { Rule } from "../../types/rule";
+import makeRules  from "../make-rules";
 
 test("makeRules()", () => {
   expect(

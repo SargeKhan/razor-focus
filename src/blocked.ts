@@ -1,31 +1,21 @@
-import { VALIDATORS, CounterPeriod } from "./storage";
-import getBlockedMessage from "./helpers/get-blocked-message";
+import storage from "./storage";
+import findRule from "./helpers/find-rule";
+import * as counterHelper from "./helpers/counter";
+import getBlockedUrl from "./helpers/get-blocked-url";
+import { Message } from "./types/messages";
 
-window.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
+interface BlockSiteOptions {
+  blocked: string[]
+  tabId: number
+  url: string
+}
 
-  const url = params.get("url");
-  if (!url) {
-    return;
-  }
+async function sendMessage(tabId: number, message: Message) {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  console.log(tab)
+  chrome.tabs.sendMessage(tab.id || 2, message)
+}
 
-  const rule = params.get("rule");
-  if (!rule) {
-    return;
-  }
-
-  const count = parseInt(params.get("count") || "");
-  const period = params.get("period");
-  const countParams = (!isNaN(count) && VALIDATORS.counterPeriod(period))
-    ? { count, period: period as CounterPeriod }
-    : undefined;
-
-  const message = getBlockedMessage({
-    url,
-    rule,
-    countParams,
-  });
-
-  (document.getElementById("message") as HTMLParagraphElement).innerHTML = message;
-  document.body.classList.add("ready");
+window.addEventListener("DOMContentLoaded", async () => {
+  console.log('i am in DOMContentLoaded')
 });

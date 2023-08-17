@@ -18,12 +18,25 @@
     "storage",
     "tabs",
     "webNavigation",
-    "contextMenus"
+    "contextMenus",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://*/*", 
+    "http://*/*" 
   ],
   "background": {
     "service_worker": "background.mjs",
     "type": "module"
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.mjs"],
+      "css": ["content.css"],
+      "run_at": "document_start"
+    }
+  ],
   "incognito": "split",
   "minimum_chrome_version": "92"
 }

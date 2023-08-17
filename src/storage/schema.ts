@@ -17,6 +17,7 @@ export interface Schema {
   enabled: boolean
   contextMenu: boolean
   blocked: string[]
+  allowed: string[]
   counter: Record<string, number[]>
   counterShow: boolean
   counterPeriod: CounterPeriod
@@ -27,6 +28,7 @@ export const DEFAULTS: Readonly<Schema> = {
   enabled: false,
   contextMenu: false,
   blocked: [],
+  allowed: [],
   counter: {},
   counterShow: false,
   counterPeriod: "ALL_TIME",
@@ -37,6 +39,7 @@ export const VALIDATORS: Readonly<Record<keyof Schema, (value: unknown) => boole
   enabled: (value) => typeof value === "boolean",
   contextMenu: (value) => typeof value === "boolean",
   blocked: (value) => Array.isArray(value),
+  allowed: (value) => Array.isArray(value),
   counter: (value) => typeof value === "object",
   counterShow: (value) => typeof value === "boolean",
   counterPeriod: (value) => COUNTER_PERIODS.includes(value as CounterPeriod),
@@ -50,4 +53,9 @@ export const BLOCKED_EXAMPLE: string[] = [
   "!music.youtube.com",
   "reddit.com",
   "!reddit.com/r/MachineLearning",
+];
+
+export const ALLOWED_EXAMPLE: string[] = [
+  "stackoverflow.com",
+  "figma.com",
 ];

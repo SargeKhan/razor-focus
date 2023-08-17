@@ -1,5 +1,5 @@
+import { Rule } from "../../types/rule";
 import findRule from "../find-rule";
-import { Rule } from "../make-rules";
 
 test("findRule()", () => {
   expect(findRule("https://www.youtube.com/", [])).toBe(undefined);

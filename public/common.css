@@ -58,3 +58,26 @@ a:hover {
     filter: saturate(50%);
   }
 }
+
+.blocked body {
+  background-color: black;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.blocked .container {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.blocked h1 {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.blocked h2 {
+  font-size: 1.5em;
+}

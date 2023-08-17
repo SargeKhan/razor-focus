@@ -1,11 +1,5 @@
+import { Rule, RuleType } from "../types/rule";
 import normalizeUrl from "./normalize-url";
-
-type RuleType = "allow" | "block"
-
-export interface Rule {
-  path: string
-  type: RuleType
-}
 
 export default (blocked: string[]): Rule[] => {
   const allowList = blocked

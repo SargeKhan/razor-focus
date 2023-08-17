@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Your Focus Page</title>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <p class="small-text">Your focus</p>
+            <h1>Design a new focus app for the world</h1>
+        </div>
+    </div>
+      <svg width="700" height="300"></svg>
+    <div >
+        <div class="content">
+        <p class="small-text">Don't let your focus slip away.</p>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    // Sample data
+    const milestones = [
+      { x: '00%', y: '70%', image: "http://127.0.0.1:5500/html/break.jpeg" },
+      { x: '10%', y: '60%', image: "http://127.0.0.1:5500/html/break.jpeg" },
+      { x: '30%', y: '40%', image: "http://127.0.0.1:5500/html/break.jpeg" },
+      { x: '50%', y: '35%', image: "http://127.0.0.1:5500/html/break.jpeg" },
+      { x: '60%', y: '35%', image: "http://127.0.0.1:5500/html/break.jpeg" },
+      { x: '70%', y: '40%', image: "http://127.0.0.1:5500/html/break.jpeg" },
+      { x: '80%', y: '62%', image: "http://127.0.0.1:5500/html/break.jpeg" },
+      { x: '90%', y: '70%', image: "http://127.0.0.1:5500/html/break.jpeg" }
+    ];
+
+    // Create SVG element
+    const svg = d3.select("svg");
+
+
+    // Convert viewport percentage to coordinates
+    const width = +svg.attr("width");
+    const height = +svg.attr("height");
+
+    milestones.forEach(milestone => {
+      milestone.x = width * parseFloat(milestone.x) / 100;
+      milestone.y = height * parseFloat(milestone.y) / 100;
+    });
+
+    console.log('milestones')
+    console.log(milestones)
+    // Draw curvy lines
+    const line = d3.line()
+      .x(d => d.x)
+      .y(d => d.y)
+      .curve(d3.curveCardinal);
+
+    const path = svg.append("path")
+      .datum(milestones)
+      .attr("d", line)
+      .attr("fill", "none")
+      .attr("stroke", "white");
+
+    // Add milestone images
+    svg.selectAll(".milestone")
+      .data(milestones)
+      .enter()
+      .append("image")
+      .attr("class", "milestone")
+      .attr("xlink:href", d => d.image)
+      .attr("x", d => d.x - 10) // Adjust positioning
+      .attr("y", d => d.y - 10) // Adjust positioning
+      .attr("width", 20)
+      .attr("height", 20);
+
+    const length = path.node().getTotalLength(); // Get line length
+    path.attr("stroke-dasharray", length + " " + length)
+    .attr("stroke-dashoffset", length)
+    .transition()
+    .ease(d3.easeLinear)
+    .attr("stroke-dashoffset", 0)
+    .delay(1500)
+    .duration(3000)
+  </script>
+<style>
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(0, 0, 0);
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* Adjust the height as needed */
+}
+
+.content {
+    text-align: center;
+}
+
+.small-text {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: gray
+}
+
+h1 {
+    font-size: 48px;
+    margin: 0;
+}
+</style>
