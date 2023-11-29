@@ -16,7 +16,7 @@ export default defineConfig({
   target: "es2022",
   format: "esm",
   treeshake: true,
-  noExternal: ["dayjs"],
+  noExternal: ["dayjs", "firebase", "utils"],
   esbuildOptions(options) {
     options.chunkNames = "chunks/[name]-[hash]";
   },
@@ -30,6 +30,9 @@ export default defineConfig({
       "options.css",
       "content.css",
       "options.html",
+      "blocked_page.html",
+      "d3.v6.min.js",
+      "blocked_page.js",
       `manifest-${TARGET}.json`,
     ];
 

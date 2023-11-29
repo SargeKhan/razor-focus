@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <script src="https://d3js.org/d3.v6.min.js"></script>
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="styles.css">
     <title>Your Focus Page</title>
 </head>
+
 <body>
     <div class="container">
         <div class="content">
@@ -15,16 +17,176 @@
             <h1>Design a new focus app for the world</h1>
         </div>
     </div>
-      <svg width="700" height="300"></svg>
-    <div >
+    <svg id="thread" width="100%" height="200"></svg>
+    <div>
         <div class="content">
-        <p class="small-text">Don't let your focus slip away.</p>
+            <p class="small-text">Don't let your focus slip away.</p>
         </div>
     </div>
 </body>
+
 </html>
+
 <script>
-    // Sample data
+
+    const browserTabActivity = {
+        '1692713886850:1692714366850': {
+            tabId: 740833495,
+            url: 'https://example.com/',
+            startTime: 1692713886850,
+            endTime: 1692714366850,
+            state: 'focused'
+        },
+        '1692713887151:1692714187151': {
+            tabId: 740833496,
+            url: 'https://news.com/',
+            startTime: 1692713887151,
+            endTime: 1692714187151,
+            state: 'distracted'
+        },
+        '1692713887452:1692714427452': {
+            tabId: 740833497,
+            url: 'https://socialmedia.com/',
+            startTime: 1692713887452,
+            endTime: 1692714427452,
+            state: 'focused'
+        },
+        '1692713887753:1692714007753': {
+            tabId: 740833498,
+            url: 'https://shopping.com/',
+            startTime: 1692713887753,
+            endTime: 1692714007753,
+            state: 'distracted'
+        },
+        '1692713888054:1692714368054': {
+            tabId: 740833499,
+            url: 'https://email.com/',
+            startTime: 1692713888054,
+            endTime: 1692714368054,
+            state: 'focused'
+        },
+        '1692713888655:1692714308655': {
+            tabId: 740833500,
+            url: 'https://games.com/',
+            startTime: 1692713888655,
+            endTime: 1692714308655,
+            state: 'distracted'
+        },
+        '1692713888956:1692714188956': {
+            tabId: 740833501,
+            url: 'https://music.com/',
+            startTime: 1692713888956,
+            endTime: 1692714188956,
+            state: 'focused'
+        }
+    }
+    addDuration(browserTabActivity)
+    function addDuration(tabActivity) {
+        Object.keys(tabActivity).forEach(key => {
+            tabActivity[key].duration = tabActivity[key].endTime - tabActivity[key].startTime
+        })
+    }
+
+    function getTotalDuration(entries) {
+        return entries.reduce((acc, curr) => acc + curr.duration, 0)
+    }
+
+    function generateLinePoints(entries) {
+        const linePoints = [];
+        let currentValue = 0;
+        const unitChangePerSecondFocused = - 1 / 150;
+        const unitChangePerSecondDistracted = 1 / 150;
+        const totalDurationInSeconds = getTotalDuration(entries) / 1000
+
+        for (const key in entries) {
+            const entry = entries[key];
+            const duration = (entry.endTime - entry.startTime) / 1000; // Convert to seconds
+
+            let adjustmentValue;
+            if (entry.state === "focused") {
+                adjustmentValue = duration * unitChangePerSecondFocused;
+            } else if (entry.state === "distracted") {
+                adjustmentValue = duration * unitChangePerSecondDistracted;
+            }
+
+            currentValue += adjustmentValue;
+
+             // Apply constraints
+             if (currentValue > 1) {
+                 currentValue = 1;
+             } else if (currentValue < -1) {
+                 currentValue = -1;
+             }
+
+            linePoints.push({
+                y: currentValue,
+                x: duration / totalDurationInSeconds
+            });
+        }
+
+        return linePoints;
+    }
+
+    function sumDirectionUntilIndex(directions, index) {
+        let sum = 0;
+        for (i =0; i<=index; i++) {
+            sum = directions[i].x + sum
+        }
+        return sum;
+    }
+    function generateMilestonesFromDirections(directions) {
+        var milestonesInPercentage = [];
+        var yPercentage = 100; // start at the middle (50%)
+
+        milestonesInPercentage.push({
+            x: '0%',
+            y: '100%',
+        })
+        for (var i = 0; i < directions.length; i++) {
+            const xPercentage = sumDirectionUntilIndex(directions, i) * 100
+
+            // Adjust y based on direction
+            if (directions[i].y > 0 && yPercentage < 100) {
+                yPercentage += 25 * directions[i].y; // Increase y value by 25%
+            } else if (directions[i].y <= 0 && yPercentage > 0) {
+                yPercentage += 25 * directions[i].y; // Decrease y value by 25%
+            } // If direction is 0 or edge cases, y remains the same
+
+            // Ensure y stays within bounds
+            yPercentage = Math.min(Math.max(yPercentage, 0), 100);
+
+            milestonesInPercentage.push({
+                x: xPercentage + '%',
+                y: yPercentage + '%',
+                image: "http://127.0.0.1:5500/html/break_red.jpeg",
+            });
+        }
+
+        console.log('calculated milestones');
+        console.log(milestonesInPercentage)
+        return milestonesInPercentage;
+    }
+
+    // Create SVG element
+    const svg = d3.select("svg");
+
+    // Usage:
+    const element = document.getElementById('thread');
+    const rect = element.getBoundingClientRect();
+    const widthInPixels = rect.width;
+    const heightInPixels = rect.height;
+    console.log(`Width of the element: ${widthInPixels} pixels`);
+    const width = +widthInPixels;
+    const height = +heightInPixels - 10;
+    console.log(width, height)
+    const directions = generateLinePoints(Object.values(browserTabActivity))
+    console.log(directions)
+    
+    
+    const milestonesInPercentage = generateMilestonesFromDirections(directions);
+    console.log("milestonesInPercentage");
+    console.log(milestonesInPercentage);
+    /*Sample data
     const milestones = [
       { x: '00%', y: '70%', image: "http://127.0.0.1:5500/html/break.jpeg" },
       { x: '10%', y: '60%', image: "http://127.0.0.1:5500/html/break.jpeg" },
@@ -34,85 +196,79 @@
       { x: '70%', y: '40%', image: "http://127.0.0.1:5500/html/break.jpeg" },
       { x: '80%', y: '62%', image: "http://127.0.0.1:5500/html/break.jpeg" },
       { x: '90%', y: '70%', image: "http://127.0.0.1:5500/html/break.jpeg" }
-    ];
-
-    // Create SVG element
-    const svg = d3.select("svg");
+    ];*/
 
 
-    // Convert viewport percentage to coordinates
-    const width = +svg.attr("width");
-    const height = +svg.attr("height");
-
-    milestones.forEach(milestone => {
-      milestone.x = width * parseFloat(milestone.x) / 100;
-      milestone.y = height * parseFloat(milestone.y) / 100;
-    });
-
-    console.log('milestones')
+    const milestones = milestonesInPercentage.map(milestone => ({
+        ...milestone,
+        x: width * parseFloat(milestone.x) / 100,
+        y: height * parseFloat(milestone.y) / 100 + 5,
+    }));
+    console.log("milestones");
     console.log(milestones)
     // Draw curvy lines
     const line = d3.line()
-      .x(d => d.x)
-      .y(d => d.y)
-      .curve(d3.curveCardinal);
+        .x(d => d.x)
+        .y(d => d.y)
+        .curve(d3.curveCardinal);
 
     const path = svg.append("path")
-      .datum(milestones)
-      .attr("d", line)
-      .attr("fill", "none")
-      .attr("stroke", "white");
+        .datum(milestones)
+        .attr("d", line)
+        .attr("fill", "none")
+        .attr("stroke", "white");
 
-    // Add milestone images
-    svg.selectAll(".milestone")
-      .data(milestones)
-      .enter()
-      .append("image")
-      .attr("class", "milestone")
-      .attr("xlink:href", d => d.image)
-      .attr("x", d => d.x - 10) // Adjust positioning
-      .attr("y", d => d.y - 10) // Adjust positioning
-      .attr("width", 20)
-      .attr("height", 20);
+    // // Add milestone images
+    // svg.selectAll(".milestone")
+    //   .data(milestones)
+    //   .enter()
+    //   .append("image")
+    //   .attr("class", "milestone")
+    //   .attr("xlink:href", d => d.image)
+    //   .attr("x", d => d.x - 10) // Adjust positioning
+    //   .attr("y", d => d.y - 10) // Adjust positioning
+    //   .attr("width", 20)
+    //   .attr("height", 20);
+
 
     const length = path.node().getTotalLength(); // Get line length
     path.attr("stroke-dasharray", length + " " + length)
-    .attr("stroke-dashoffset", length)
-    .transition()
-    .ease(d3.easeLinear)
-    .attr("stroke-dashoffset", 0)
-    .delay(1500)
-    .duration(3000)
-  </script>
+        .attr("stroke-dashoffset", length)
+        .transition()
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0)
+        .delay(1500)
+        .duration(3000)
+</script>
 <style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: rgb(0, 0, 0);
+        font-family: Arial, sans-serif;
+        color: white;
+    }
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color: rgb(0, 0, 0);
-    font-family: Arial, sans-serif;
-    color: white;
-}
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50vh;
+        /* Adjust the height as needed */
+    }
 
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50vh; /* Adjust the height as needed */
-}
+    .content {
+        text-align: center;
+    }
 
-.content {
-    text-align: center;
-}
+    .small-text {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: gray
+    }
 
-.small-text {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: gray
-}
-
-h1 {
-    font-size: 48px;
-    margin: 0;
-}
+    h1 {
+        font-size: 48px;
+        margin: 0;
+    }
 </style>

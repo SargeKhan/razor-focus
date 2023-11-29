@@ -81,3 +81,24 @@ a:hover {
 .blocked h2 {
   font-size: 1.5em;
 }
+.card {
+  position: absolute;
+  top: 20px;
+  right: 20px;  /* Set the initial position to the top right corner */
+  width: 250px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+}
+
+.card-header {
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.card-content {
+  padding: 15px;
+}

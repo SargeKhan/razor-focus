@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Draggable Tile</title>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+  <script src="popup.js"></script>
+</head>
+<body>
+  <div class="tile" id="draggableTile">
+    Drag me!
+  </div>
+</body>
+</html>
+
+<style>
+body {
+  width: 200px;
+  height: 150px;
+}
+
+.tile {
+  width: 100px;
+  height: 100px;
+  background-color: #3498db;
+  color: #fff;
+  text-align: center;
+  line-height: 100px;
+  cursor: move;
+}
+</style>
+<script>
+    let offsetX, offsetY;
+
+document.getElementById("draggableTile").addEventListener("mousedown", (e) => {
+  offsetX = e.clientX - e.target.getBoundingClientRect().left;
+  offsetY = e.clientY - e.target.getBoundingClientRect().top;
+
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+});
+
+function onMouseMove(e) {
+  const tile = document.getElementById("draggableTile");
+  tile.style.left = e.clientX - offsetX + "px";
+  tile.style.top = e.clientY - offsetY + "px";
+}
+
+function onMouseUp() {
+  document.removeEventListener("mousemove", onMouseMove);
+  document.removeEventListener("mouseup", onMouseUp);
+}
+</script>

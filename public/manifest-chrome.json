@@ -21,9 +21,11 @@
     "contextMenus",
     "activeTab"
   ],
+  "content_security_policy": {
+  },
   "host_permissions": [
-    "https://*/*", 
-    "http://*/*" 
+    "https://*/*",
+    "http://*/*"
   ],
   "background": {
     "service_worker": "background.mjs",
@@ -31,9 +33,16 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["content.mjs"],
-      "css": ["content.css"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.mjs"
+      ],
+      "css": [
+        "content.css"
+      ],
       "run_at": "document_start"
     }
   ],

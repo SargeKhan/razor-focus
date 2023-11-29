@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .card {
+      position: absolute;
+      width: 250px;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      cursor: grab;
+    }
+
+    .card-header {
+      background-color: #3498db;
+      color: #fff;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    .card-content {
+      padding: 15px;
+    }
+  </style>
+  <title>Draggable Card</title>
+</head>
+<body>
+  <div class="card" id="draggableCard">
+    <div class="card-header">Drag Me</div>
+    <div class="card-content">
+      <p>This is a draggable card.</p>
+    </div>
+  </div>
+  <script>
+    const card = document.getElementById("draggableCard");
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    card.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - card.getBoundingClientRect().left;
+      offsetY = e.clientY - card.getBoundingClientRect().top;
+      card.style.cursor = "grabbing";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        card.style.left = e.clientX - offsetX + "px";
+        card.style.top = e.clientY - offsetY + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      card.style.cursor = "grab";
+    });
+  </script>
+</body>
+</html>
